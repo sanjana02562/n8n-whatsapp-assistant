@@ -1,0 +1,175 @@
+{
+  "name": "WhatsApp Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "twilio-webhook",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -96,
+        16
+      ],
+      "id": "aa9e7104-3a64-4da5-96fa-a31406f343c4",
+      "name": "Webhook",
+      "webhookId": "888ed668-79d7-4f00-bc29-8f29a0f8a2d6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "04c2f226-1252-4910-9d41-34d42a8560b5",
+              "name": "to",
+              "value": "={{$json[\"body\"][\"From\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "767fd2fe-bc40-4a5f-9bd7-09046969bad2",
+              "name": "message",
+              "value": "=Hello {{$json[\"body\"][\"ProfileName\"]}}, nice to meet you! 👋",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        16
+      ],
+      "id": "2fa77a12-9d1e-4940-a4f3-b5055c8d70c7",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "={{$json[\"MediaUrl0\"]}}\n",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{$json[\"to\"]}}"
+            },
+            {
+              "name": "From",
+              "value": "whatsapp:+14155238886"
+            },
+            {
+              "name": "Body",
+              "value": "={{$json[\"message\"]}}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        464,
+        16
+      ],
+      "id": "dec0a3f9-0273-49c6-b7b3-d960eff6c0fb",
+      "name": "HTTP Request",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "vKvMmVWqI63eCZWi",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "{{$binary.data.fileName}}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        656,
+        16
+      ],
+      "id": "d7cf571a-d9a7-45c4-b43f-242a09bed8d7",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "M8ZUsbkxAFLAmoHz",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2c3130d0-6a65-4af5-999b-39aaf2a349b0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5b9e367355711ee2d618c5c59638a84bd337b81aa27a13619b267318d650f6a1"
+  },
+  "id": "91DRPpEwQa1Ob6eO",
+  "tags": []
+}
